@@ -1,22 +1,30 @@
-var browserSync = require('browser-sync');
+var bs = require('browser-sync').create();;
 
-browserSync({
-  proxy: 'https://www.g-star.com/',
-  files: ['public/js/*.js'],
+bs.init({
+  proxy: 'https://www.freo.nl',
+  plugins: ['bs-rewrite-rules'],
+  files: ['public/js/index.js'],
   serveStatic: ['public/js'],
   rewriteRules: [
       {
-        match: new RegExp('_ui/g-star/js/app/base.495e357e608e7d2d4de7355c1ca84f48.js'),
-        fn: function() {
-          return 'index.js';
-        }
+        match: 'https://cdn.ravenjs.com/3.24.2/raven.min.js',
+        replace: 'index.js'
       }
   ]
 });
 
-/*https://localhost:3000/portal/wikipedia.org/assets/js/index-309cc1c97b.js
-https://www.wikipedia.org/portal/wikipedia.org/assets/js/index-309cc1c97b.js*/
-/*
- match: new RegExp('portal/wikipedia.org/assets/js/index-309cc1c97b.js'),
+//G-star 
+/*rewriteRules: [
+    {
+      match: '_ui/g-star/js/vendor/polyfill/picturefill-3.0.2.min.js',
+      replace: 'index.js'
+    }
+]*/
 
- var reg = /portal\/wikipedia\.org\/assets\/js\/index-309cc1c97b.js/g*/
+//Freo
+/*rewriteRules: [
+    {
+      match: 'https://cdn.ravenjs.com/3.24.2/raven.min.js',
+      replace: 'index.js'
+    }
+]*/

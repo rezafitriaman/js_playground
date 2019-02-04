@@ -1,8 +1,8 @@
-/*requered*/
+/*requiered*/
 var gulp = require('gulp'),
 	uglify = require('gulp-uglify'),
-	browserSync = require('browser-sync'),
-	reload = browserSync.reload,
+	bs = require('browser-sync').create(),
+	reload = bs.reload,
 	plumber = require('gulp-plumber'),
 	ts = require('gulp-typescript');
 
@@ -13,22 +13,29 @@ gulp.task("type", function () {
     var tsResult = gulp.src("src/"+testCode+"/*.ts")
     	.pipe(plumber())
         .pipe(ts({
-              noImplicitAny: true,
+              noImplicitAny: false,
               out: "output.js"
         }))
     return tsResult.js
     /*.pipe(uglify())*/
-    .pipe(gulp.dest("public/"+testCode+""));
+    .pipe(gulp.dest("public/"+testCode+""))
+    .pipe(reload({stream:true}));
 });
 
 /*browser-sync*/
-gulp.task('browser-sync', function () {
+gulp.task('browser-sync', ['type'], function () {
 	console.log('browser-sync work!');
-	browserSync({
-		server: {
-			baseDir: 'public',
-			proxy: "grqbge-nwx7013:3000"
-		}
+	bs.init({
+	  proxy: 'https://www.freo.nl/leningen/offerte-aanvragen/',
+	  plugins: ['bs-rewrite-rules'],
+	  files: ['public/'+testCode+'/output.js'],
+	  serveStatic: ['public/' + testCode],
+	  rewriteRules: [
+	    {
+	      	match: 'Scripts/FreoWebsite/polyfills.js?v=4.42.0.24204',
+	      	replace: 'output.js'
+	    }
+	  ]
 	});
 });
 
@@ -39,4 +46,21 @@ gulp.task('watch', function() {
 });
 
 /*default*/
-gulp.task('default',['type', 'browser-sync', 'watch']);
+gulp.task('default',['browser-sync', 'watch']);
+
+
+//G-star 
+/*rewriteRules: [
+    {
+      match: '_ui/g-star/js/vendor/polyfill/picturefill-3.0.2.min.js',
+      replace: 'index.js'
+    }
+]*/
+
+//Freo
+/*rewriteRules: [
+    {
+      match: 'https://cdn.ravenjs.com/3.24.2/raven.min.js',
+      replace: 'index.js'
+    }
+]*/
