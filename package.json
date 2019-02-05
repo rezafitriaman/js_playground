@@ -1,18 +1,17 @@
 {
   "name": "js_playground",
   "version": "1.0.0",
-  "description": "add ts to my code",
+  "description": "a playground for Js -> try to apply .ts",
   "main": "gulpfile.js",
   "dependencies": {
-    "browser-sync": "^2.26.3",
-    "gulp": "^3.9.1",
-    "gulp-rename": "^1.4.0",
-    "gulp-plumber": "^1.2.1",
-    "gulp-sourcemaps": "^2.6.4",
+    "bs-rewrite-rules": "^2.1.2",
+    "browserify": "^16.2.3",
+    "gulp-open": "^3.0.1",
+    "gulp-connect": "^5.7.0",
     "gulp-typescript": "^5.0.0",
-    "typescript": "^3.2.2",
-    "tslint": "^5.11.0",
-    "gulp-uglify": "^3.0.1"
+    "tsify": "^4.0.1",
+    "typescript": "^3.3.1",
+    "vinyl-source-stream": "^2.0.0"
   },
   "devDependencies": {},
   "scripts": {
@@ -22,7 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/rezafitriaman/js_playground.git"
   },
-  "author": "reza",
+  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/rezafitriaman/js_playground/issues"

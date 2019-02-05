@@ -4,7 +4,7 @@ MAKE SURE DEVELOPE ENVI SET TO FALSE ON PRODUCTION
 ==============================
 */
 
-let developEnvi:boolean = true;
+let developEnvi:boolean = false;
 let testId = "t4u-AFMtest-2";
 
 /*
@@ -336,7 +336,6 @@ let customCodeInit = () => {
   //init code when the box: mogelijke leenvormen has showed
   let inter = setInterval(function(){
     if((<HTMLElement>document.getElementsByClassName('offertestraat__results offertestraat__results--leenbedrag')[0]).style.display != 'none') {
-      console.log(v)
       v.insert();
       clearInterval(inter);
     } 

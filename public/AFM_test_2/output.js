@@ -16,7 +16,7 @@ var __extends = (this && this.__extends) || (function () {
 MAKE SURE DEVELOPE ENVI SET TO FALSE ON PRODUCTION
 ==============================
 */
-var developEnvi = true;
+var developEnvi = false;
 var testId = "t4u-AFMtest-2";
 /*
 ==============================
@@ -319,7 +319,6 @@ var customCodeInit = function () {
     //init code when the box: mogelijke leenvormen has showed
     var inter = setInterval(function () {
         if (document.getElementsByClassName('offertestraat__results offertestraat__results--leenbedrag')[0].style.display != 'none') {
-            console.log(v);
             v.insert();
             clearInterval(inter);
         }

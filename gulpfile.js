@@ -1,66 +1,122 @@
-/*requiered*/
-var gulp = require('gulp'),
+/*
+==============================
+REQUIRED
+==============================
+*/
+
+const gulp = require('gulp'),
 	uglify = require('gulp-uglify'),
 	bs = require('browser-sync').create(),
 	reload = bs.reload,
 	plumber = require('gulp-plumber'),
-	ts = require('gulp-typescript');
+	ts = require('gulp-typescript'),
+	tsProject = ts.createProject("tsconfig.json"),
+	browserify = require("browserify"),
+	source = require('vinyl-source-stream'),
+	tsify = require("tsify"),
+	watchify = require("watchify")
+	sourcemaps = require('gulp-sourcemaps'),
+	buffer = require('vinyl-buffer');
 
-var testCode = 'AFM_test_2';
-/*task*/
-gulp.task("type", function () {
-	console.log('type')
-    var tsResult = gulp.src("src/"+testCode+"/*.ts")
-    	.pipe(plumber())
-        .pipe(ts({
-              noImplicitAny: false,
-              out: "output.js"
-        }))
-    return tsResult.js
-    /*.pipe(uglify())*/
-    .pipe(gulp.dest("public/"+testCode+""))
-    .pipe(reload({stream:true}));
-});
+/*
+==============================
+TEST ID
+==============================
+*/
 
-/*browser-sync*/
-gulp.task('browser-sync', ['type'], function () {
-	console.log('browser-sync work!');
+const testId = {
+	id: 'tutorial_ts',
+	customer: 'freo'
+};
+
+/*
+==============================
+PATHS - REWRITEFILE
+==============================
+*/
+
+const paths = {
+	    main_tsFile: ['src/'+testId.id+'/main.ts']
+	};
+const rewriteFile = {
+	freo: ['Scripts/FreoWebsite/polyfills.js?v=4.42.0.24204'],
+	gStar:['_ui/g-star/js/vendor/polyfill/picturefill-3.0.2.min.js']
+}
+
+/*
+==============================
+GULP TASK
+==============================
+*/
+
+gulp.task('BROWSER-SYNC', function () {
+
 	bs.init({
-	  proxy: 'https://www.freo.nl/leningen/offerte-aanvragen/',
+	  proxy: {
+	  	target : 'https://www.freo.nl/leningen/offerte-aanvragen/',
+	  	ws: true
+	  },
 	  plugins: ['bs-rewrite-rules'],
-	  files: ['public/'+testCode+'/output.js'],
-	  serveStatic: ['public/' + testCode],
+	  files: ['public/'+testId.id+'/bundle.js'],
+	  serveStatic: ['public/' + testId.id],
 	  rewriteRules: [
 	    {
-	      	match: 'Scripts/FreoWebsite/polyfills.js?v=4.42.0.24204',
-	      	replace: 'output.js'
+	      	match: rewriteFile[testId.customer][0],
+	      	replace: 'bundle.js'
 	    }
 	  ]
 	});
 });
 
-/*watch*/
-gulp.task('watch', function() {
-	console.log('watch');
-	gulp.watch('src/'+testCode+'/*.ts', ['type']);
-});
+const watchedBrowserify = watchify(browserify({
+    basedir: '.',
+	debug: true,
+	entries: paths.main_tsFile,
+	cache: {},
+	packageCache: {}
+	})
+	.plugin(tsify, {
+		"files": [
+	        "src/"+testId.id+"/*.ts"
+	    ],
+	    "compilerOptions": {
+	        "noImplicitAny": true,
+	        "target": "es5"
+	    },
+	     "removeComments": true
+	})
+	.transform("babelify", 
+		{presets: ["@babel/preset-env", {
+	       "targets": "> 0.25%, not dead"
+	    }]})
+);
 
-/*default*/
-gulp.task('default',['browser-sync', 'watch']);
+const bundle = () => {
+	console.log('------------PREPARING TEST ID: ', testId.id, '------------')
+	console.log('------------PREPARING TEST CUSTOMER: ', testId.customer, '------------')
 
+    return watchedBrowserify
+        .bundle()
+    	.pipe(source('bundle.js'))
+    	.pipe(buffer())
+	    .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest("public/"+testId.id+""))
+        .pipe(reload({stream:true}));
+}
 
-//G-star 
-/*rewriteRules: [
-    {
-      match: '_ui/g-star/js/vendor/polyfill/picturefill-3.0.2.min.js',
-      replace: 'index.js'
-    }
-]*/
+/*
+==============================
+WATCH TASK
+==============================
+*/
 
-//Freo
-/*rewriteRules: [
-    {
-      match: 'https://cdn.ravenjs.com/3.24.2/raven.min.js',
-      replace: 'index.js'
-    }
-]*/
+watchedBrowserify.on("update", bundle);
+
+/*
+==============================
+DEFAULT TASK
+==============================
+*/
+
+gulp.task('default',['BROWSER-SYNC'], bundle);
