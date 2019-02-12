@@ -21,12 +21,17 @@ const gulp = require('gulp'),
 /*
 ==============================
 TEST ID
+- MAKE SURE TO SET ID
+- MAKE SURE TO SET CUSTOMER
+
+for option look const 'rewriteFile-Object' below
 ==============================
 */
 
 const testId = {
-	id: 'tutorial_ts',
-	customer: 'freo'
+	id: 'T002',
+	customer: 'gStar',
+	whichPage: 'beforeCheckout'
 };
 
 /*
@@ -36,12 +41,17 @@ PATHS - REWRITEFILE
 */
 
 const paths = {
-	    main_tsFile: ['src/'+testId.id+'/main.ts']
-	};
+	main_tsFile: ['src/'+testId.id+'/main.ts']
+};
 const rewriteFile = {
-	freo: ['Scripts/FreoWebsite/polyfills.js?v=4.42.0.24204'],
-	gStar:['_ui/g-star/js/vendor/polyfill/picturefill-3.0.2.min.js']
-}
+	freo: {
+		all: 'Scripts/FreoWebsite/polyfills.js?v=4.47.0.27977'
+	},
+	gStar: {
+		beforeCheckout: '_ui/g-star/js/vendor/polyfill/picturefill-3.0.2.min.js',
+		checkoutAndAbove: '_ui/g-star/js/app/base.1f42b9df26df50a299c31779358e4496.js'
+	}
+};
 
 /*
 ==============================
@@ -53,7 +63,7 @@ gulp.task('BROWSER-SYNC', function () {
 
 	bs.init({
 	  proxy: {
-	  	target : 'https://www.freo.nl/leningen/offerte-aanvragen/',
+	  	target : 'https://outlet.g-star.com/',
 	  	ws: true
 	  },
 	  plugins: ['bs-rewrite-rules'],
@@ -61,7 +71,7 @@ gulp.task('BROWSER-SYNC', function () {
 	  serveStatic: ['public/' + testId.id],
 	  rewriteRules: [
 	    {
-	      	match: rewriteFile[testId.customer][0],
+	      	match: rewriteFile[testId.customer][testId.whichPage],
 	      	replace: 'bundle.js'
 	    }
 	  ]
@@ -85,10 +95,22 @@ const watchedBrowserify = watchify(browserify({
 	    },
 	     "removeComments": true
 	})
-	.transform("babelify", 
-		{presets: ["@babel/preset-env", {
-	       "targets": "> 0.25%, not dead"
-	    }]})
+	.transform("babelify", {
+			"presets": [
+			    [
+					"@babel/preset-env", {
+					  "useBuiltIns": "entry",
+					  "targets": {
+					    "browsers": [
+					      "last 2 versions",
+					      "safari >= 7",
+					      "ie >= 11"
+					    ]
+					  }
+					}
+				]
+			]
+	})
 );
 
 const bundle = () => {

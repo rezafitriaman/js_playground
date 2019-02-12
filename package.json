@@ -2,16 +2,39 @@
   "name": "js_playground",
   "version": "1.0.0",
   "description": "a playground for Js -> try to apply .ts",
-  "main": "gulpfile.js",
+  "main": "bs.js",
   "dependencies": {
+    "babelify": "^10.0.0",
+    "babel-preset-env": "^1.7.0",
     "bs-rewrite-rules": "^2.1.2",
     "browserify": "^16.2.3",
-    "gulp-open": "^3.0.1",
     "gulp-connect": "^5.7.0",
+    "gulp-open": "^3.0.1",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-uglify": "^3.0.1",
     "gulp-typescript": "^5.0.0",
+    "gulp-util": "^3.0.8",
     "tsify": "^4.0.1",
     "typescript": "^3.3.1",
-    "vinyl-source-stream": "^2.0.0"
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0",
+    "watchify": "^3.11.0"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env", {
+          "useBuiltIns": "entry",
+          "targets": {
+            "browsers": [
+              "last 2 versions",
+              "safari >= 7",
+              "ie >= 11"
+            ]
+          }
+        }
+      ]
+    ]
   },
   "devDependencies": {},
   "scripts": {

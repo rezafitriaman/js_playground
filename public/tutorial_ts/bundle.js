@@ -1,8 +1,8 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-function appendJsOrigin() {
-    var rawUrl = 'https://www.freo.nl/Scripts/FreoWebsite/polyfills.js?v=4.42.0.24204';
+function appendJsOrigin(testId, urlOrigin) {
+    var rawUrl = urlOrigin;
     var head = document.getElementsByTagName('head')[0];
     var script = document.createElement('script');
     script.type = 'text/javascript';
@@ -12,6 +12,7 @@ function appendJsOrigin() {
         document.getElementById('t4u-custom-script').remove();
     }
     head.appendChild(script);
+    document.getElementsByTagName('html')[0].classList.add(testId);
 }
 exports.appendJsOrigin = appendJsOrigin;
 },{}],2:[function(require,module,exports){
@@ -30,10 +31,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var appendJsOrigin_1 = require("./appendJsOrigin");
-var developEnvi = true;
-var testId = "t4u-AFMtest-2";
-var customCodeInit = function () {
+function customCodeInit() {
     var MaandAflossen = (function () {
         function MaandAflossen(theVariantion) {
             var variation = {
@@ -277,22 +275,31 @@ var customCodeInit = function () {
         };
         return V4;
     }(MaandAflossen));
-    var v = new V3();
+    var v = new V1();
     var inter = setInterval(function () {
         if (document.getElementsByClassName('offertestraat__results offertestraat__results--leenbedrag')[0].style.display != 'none') {
             v.insert();
             clearInterval(inter);
         }
     }, 300);
-};
+}
+exports.customCodeInit = customCodeInit;
+},{}],3:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var appendJsOrigin_1 = require("./appendJsOrigin");
+var customCodeInit_1 = require("./customCodeInit");
+var developEnvi = true;
+var testId = "t4u-AFMtest-2";
+var urlOrigin = 'https://www.freo.nl/Scripts/FreoWebsite/polyfills.js?v=4.47.0.27977';
 if (developEnvi) {
-    console.log('%c!---------DEV ENVI + ' + testId + '---------!', "color: green; font-size:18px;");
-    appendJsOrigin_1.appendJsOrigin(testId);
-    customCodeInit();
+    console.log('%c<-------------------DEV ENVI' + '-------------------' + testId + '------------------->', "color: green; font-size:16px;");
+    appendJsOrigin_1.appendJsOrigin(testId, urlOrigin);
+    customCodeInit_1.customCodeInit();
 }
 else {
-    customCodeInit();
+    customCodeInit_1.customCodeInit();
 }
-},{"./appendJsOrigin":1}]},{},[2])
+},{"./appendJsOrigin":1,"./customCodeInit":2}]},{},[3])
 
 //# sourceMappingURL=bundle.js.map
